@@ -2,6 +2,7 @@ package me.danikvitek.lab3.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
@@ -20,9 +21,12 @@ interface StudentDao {
     @Query("INSERT INTO students (full_name, created_at) VALUES (:fullName, :createdAt)")
     suspend fun insert(fullName: String, createdAt: Date = Date())
 
-    suspend fun insert(vararg fullNames: String) {
+    suspend fun insertAll(vararg fullNames: String) {
         for (fullName in fullNames) insert(fullName)
     }
+
+    @Insert
+    suspend fun insertAll(students: List<Student>)
 
     @Upsert
     suspend fun upsertAll(students: List<Student>)

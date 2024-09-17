@@ -6,27 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.danikvitek.lab3.data.dao.StudentDao
-import me.danikvitek.lab3.data.entity.Student
 import javax.inject.Inject
 
 @HiltViewModel
-class StartScreenViewModel @Inject constructor (
+class StartScreenViewModel @Inject constructor(
     private val studentDao: StudentDao,
 ) : ViewModel() {
-
-    init {
-        viewModelScope.launch {
-            studentDao.deleteAll()
-            studentDao.resetAutoincrement()
-            studentDao.insert(
-                "Іваненко Іван Іванович",
-                "Сидоренко Сидір Сидорович",
-                "Микитенко Микита Микитович",
-                "Олексієнко Олексій Олексійович",
-                "Максименко Максим Максимович",
-            )
-        }
-    }
 
     fun addStudent(fullName: String) = viewModelScope.launch {
         studentDao.insert(fullName)
@@ -37,9 +22,5 @@ class StartScreenViewModel @Inject constructor (
         studentDao.update(lastStudent.apply {
             fullName = "Петренко Петро Петрович"
         })
-    }
-
-    fun deleteStudent(student: Student) = viewModelScope.launch {
-        studentDao.delete(student)
     }
 }

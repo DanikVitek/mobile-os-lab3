@@ -4,21 +4,22 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import me.danikvitek.lab3.data.AppDatabase
 import me.danikvitek.lab3.data.entity.Student
 
 /**
  * Fills the database with the data from the JSON file
  */
-class SeedDatabaseWorker(
+class ReseedDatabaseWorker(
     context: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
+    @OptIn(ExperimentalSerializationApi::class)
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val filename = inputData.getString(KEY_FILENAME)
@@ -28,12 +29,13 @@ class SeedDatabaseWorker(
             }
 
             applicationContext.assets.open(filename).use { inputStream ->
-                JsonReader(inputStream.bufferedReader()).use { jsonReader ->
-                    val listType = object : TypeToken<List<Student>>() {}.type
-                    val students: List<Student> = Gson().fromJson(jsonReader, listType)
-
+                Json.decodeFromStream<List<Student>>(inputStream).let { students ->
                     val database = AppDatabase.getInstance(applicationContext)
-                    database.studentDao().upsertAll(students)
+
+                    val studentDao = database.studentDao()
+                    studentDao.deleteAll()
+                    studentDao.resetAutoincrement()
+                    studentDao.upsertAll(students)
 
                     Result.success()
                 }
@@ -45,7 +47,7 @@ class SeedDatabaseWorker(
     }
 
     companion object {
-        private const val TAG = "AppDatabaseWorker"
+        private val TAG = ReseedDatabaseWorker::class.simpleName!!
         const val KEY_FILENAME = "STUDENT_DATA_FILENAME"
     }
 }
