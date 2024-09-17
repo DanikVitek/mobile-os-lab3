@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lab3</string>
+    <string name="btn_students_info">Інформація про студентів</string>
+    <string name="btn_add_Student">Додати студента</string>
+    <string name="btn_swap_student">Замінити студента</string>
+    <string name="student_info_full_name">ПІБ</string>
+    <string name="student_info_created_at">Створено</string>
+</resources>

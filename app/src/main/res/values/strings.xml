@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Lab3</string>
+    <string name="btn_students_info">Student Info</string>
+    <string name="btn_add_Student">Add Student</string>
+    <string name="btn_swap_student">Swap Student</string>
+    <string name="student_info_full_name">Full Name</string>
+    <string name="student_info_created_at">Created At</string>
+</resources>
