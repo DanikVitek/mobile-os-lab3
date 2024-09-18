@@ -5,15 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import me.danikvitek.lab3.data.dao.StudentDao
 import me.danikvitek.lab3.data.entity.Student
-import me.danikvitek.lab3.worker.ReseedDatabaseWorker
-import me.danikvitek.lab3.worker.ReseedDatabaseWorker.Companion.KEY_FILENAME
-import me.danikvitek.lab3.worker.SeedDatabaseWorker
 
 @Database(
     entities = [Student::class],
@@ -25,7 +18,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         private const val DATABASE_NAME = "mobile-os-lab3"
-        private const val STUDENT_DATA_FILENAME = "students.json"
 
         @Volatile
         private var instance: AppDatabase? = null
@@ -36,24 +28,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
         private fun buildDatabase(context: Context): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        val request = OneTimeWorkRequestBuilder<SeedDatabaseWorker>()
-                            .setInputData(workDataOf(KEY_FILENAME to STUDENT_DATA_FILENAME))
-                            .build()
-                        WorkManager.getInstance(context).enqueue(request)
-                    }
-
-                    override fun onOpen(db: SupportSQLiteDatabase) {
-                        super.onOpen(db)
-                        val request = OneTimeWorkRequestBuilder<ReseedDatabaseWorker>()
-                            .setInputData(workDataOf(KEY_FILENAME to STUDENT_DATA_FILENAME))
-                            .build()
-                        WorkManager.getInstance(context).enqueue(request)
-                    }
-                })
-                .build()
+            Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
     }
 }
