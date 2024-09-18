@@ -1,11 +1,9 @@
 package me.danikvitek.lab3.data.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import me.danikvitek.lab3.data.entity.Student
 import java.util.Date
@@ -16,26 +14,16 @@ interface StudentDao {
     fun getAll(): Flow<List<Student>>
 
     @Query("SELECT * FROM students ORDER BY id DESC LIMIT 1")
-    fun getLastAdded(): Flow<Student?>
+    suspend fun getLastAdded(): Student?
 
     @Query("INSERT INTO students (full_name, created_at) VALUES (:fullName, :createdAt)")
     suspend fun insert(fullName: String, createdAt: Date = Date())
 
-    suspend fun insertAll(vararg fullNames: String) {
-        for (fullName in fullNames) insert(fullName)
-    }
-
     @Insert
     suspend fun insertAll(students: List<Student>)
 
-    @Upsert
-    suspend fun upsertAll(students: List<Student>)
-
     @Update
     suspend fun update(student: Student)
-
-    @Delete
-    suspend fun delete(student: Student)
 
     @Query("DELETE FROM students")
     suspend fun deleteAll()

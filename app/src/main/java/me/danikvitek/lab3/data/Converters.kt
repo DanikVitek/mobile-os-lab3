@@ -3,10 +3,10 @@ package me.danikvitek.lab3.data
 import androidx.room.TypeConverter
 import java.util.Date
 
-object Converters {
+class Converters {
     @TypeConverter
-    fun dateToLong(timestamp: Date?): Long? = timestamp?.time
+    fun dateToLong(timestamp: Date): Long = timestamp.time
 
     @TypeConverter
-    fun longToDate(long: Long?): Date? = long?.let { Date(it) }
+    fun longToDate(long: Long): Date = Date(long)
 }
