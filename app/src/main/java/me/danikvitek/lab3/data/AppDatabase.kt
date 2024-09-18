@@ -13,11 +13,11 @@ import me.danikvitek.lab3.data.dao.StudentDao
 import me.danikvitek.lab3.data.entity.Student
 import me.danikvitek.lab3.worker.ReseedDatabaseWorker
 import me.danikvitek.lab3.worker.ReseedDatabaseWorker.Companion.KEY_FILENAME
+import me.danikvitek.lab3.worker.SeedDatabaseWorker
 
 @Database(
     entities = [Student::class],
     version = 1,
-    exportSchema = false,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -40,21 +40,20 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        enqueueDatabaseReseeding(context)
+                        val request = OneTimeWorkRequestBuilder<SeedDatabaseWorker>()
+                            .setInputData(workDataOf(KEY_FILENAME to STUDENT_DATA_FILENAME))
+                            .build()
+                        WorkManager.getInstance(context).enqueue(request)
                     }
 
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
-                        enqueueDatabaseReseeding(context)
+                        val request = OneTimeWorkRequestBuilder<ReseedDatabaseWorker>()
+                            .setInputData(workDataOf(KEY_FILENAME to STUDENT_DATA_FILENAME))
+                            .build()
+                        WorkManager.getInstance(context).enqueue(request)
                     }
                 })
                 .build()
-
-        private fun enqueueDatabaseReseeding(context: Context) {
-            val request = OneTimeWorkRequestBuilder<ReseedDatabaseWorker>()
-                .setInputData(workDataOf(KEY_FILENAME to STUDENT_DATA_FILENAME))
-                .build()
-            WorkManager.getInstance(context).enqueue(request)
-        }
     }
 }
