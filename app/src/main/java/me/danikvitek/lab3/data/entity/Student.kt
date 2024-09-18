@@ -14,9 +14,16 @@ import java.util.Date
 @Serializable
 @Entity(tableName = "students")
 data class Student(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
 
-    @ColumnInfo(name = "full_name") var fullName: String,
+    @ColumnInfo(defaultValue = "")
+    var surname: String,
+
+    var name: String,
+
+    @ColumnInfo(defaultValue = "")
+    var patronymic: String,
 
     @ColumnInfo(
         name = "created_at",
@@ -24,7 +31,9 @@ data class Student(
     )
     @Serializable(with = DateSerializer::class)
     val createdAt: Date = Date(),
-)
+) {
+    val fullName: String get() = "$surname $name $patronymic"
+}
 
 private class DateSerializer : KSerializer<Date> {
     override val descriptor: SerialDescriptor = serialDescriptor<Long>()

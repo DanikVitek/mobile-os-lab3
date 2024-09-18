@@ -29,7 +29,11 @@ fun StartScreen(
         callbacks = StartScreenCallbacks(
             onNavigateToStudentInfo = onNavigateToStudentInfo,
             onAddStudent = {
-                viewModel.addStudent("Вітковський Данило Олександрович")
+                viewModel.addStudent(
+                    surname = "Вітковський",
+                    name = "Данило",
+                    patronymic = "Олександрович",
+                )
             },
             onSwapLastStudent = {
                 viewModel.swapLastStudent()

@@ -16,8 +16,16 @@ interface StudentDao {
     @Query("SELECT * FROM students ORDER BY id DESC LIMIT 1")
     suspend fun getLastAdded(): Student?
 
-    @Query("INSERT INTO students (full_name, created_at) VALUES (:fullName, :createdAt)")
-    suspend fun insert(fullName: String, createdAt: Date = Date())
+    @Query(
+        "INSERT INTO students (surname, name, patronymic, created_at) " +
+        "VALUES (:surname, :name, :patronymic, :createdAt)"
+    )
+    suspend fun insert(
+        surname: String,
+        name: String,
+        patronymic: String,
+        createdAt: Date = Date(),
+    )
 
     @Insert
     suspend fun insertAll(students: List<Student>)

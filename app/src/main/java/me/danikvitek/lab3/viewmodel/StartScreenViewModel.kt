@@ -37,15 +37,21 @@ class StartScreenViewModel @Inject constructor(
         }
     }
 
-    fun addStudent(fullName: String) = viewModelScope.launch {
-        studentDao.insert(fullName)
+    fun addStudent(surname: String, name: String, patronymic: String) = viewModelScope.launch {
+        studentDao.insert(
+            surname = surname,
+            name = name,
+            patronymic = patronymic,
+        )
     }
 
     fun swapLastStudent() = viewModelScope.launch {
         withTransaction {
             val lastStudent = studentDao.getLastAdded() ?: return@withTransaction
             studentDao.update(lastStudent.apply {
-                fullName = "Петренко Петро Петрович"
+                surname = "Петренко"
+                name = "Петро"
+                patronymic = "Петрович"
             })
         }
     }
